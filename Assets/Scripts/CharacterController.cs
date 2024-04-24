@@ -34,9 +34,12 @@ public class CharacterController : MonoBehaviour
 
     bool EstaEnSuelo()
     {
-        RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, new Vector2(boxCollider.bounds.size.x, boxCollider.bounds.size.y), 0f, Vector2.down, 0.3f, capaSuelo);
-        return raycastHit.collider != null;
+        float castDistance = 0.05f; // Adjust as needed
+        Vector2 castOrigin = transform.position - new Vector3(0f, boxCollider.size.y / 2f, 0f); // Adjust y-offset if needed
+        RaycastHit2D hit = Physics2D.Raycast(castOrigin, Vector2.down, castDistance, capaSuelo);
+        return hit.collider != null;
     }
+
 
     void Salto()
     {
