@@ -11,10 +11,13 @@ public class PlaySong : MonoBehaviour
     public AudioSource Kick, Snare, Hithat;
 
     public AudioClip Kick_Clip, Snare_Clip, Hithat_Clip;
+
+    private bool isLose=false;
     /// <summary>
     /// S/////S
     /// </summary>
     Coroutine currentCoroutine;
+    Coroutine currentCoroutine2;
     void Start()
     {
         Oscilador1.isMono = true;
@@ -36,32 +39,36 @@ public class PlaySong : MonoBehaviour
         Snare.clip = Snare_Clip;
         Hithat.clip = Hithat_Clip;
 
-
+        isLose = false;
         currentCoroutine = StartCoroutine(Song());
+        
     }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             // Cancelar la Coroutine actual y empezar la nueva Coroutine
-            if (currentCoroutine != null)
-                StopCoroutine(currentCoroutine);
-            currentCoroutine = StartCoroutine(Song());
+            if (currentCoroutine2 != null)
+                StopCoroutine(currentCoroutine2);
+            currentCoroutine2 = StartCoroutine(JumpSong());
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        //if (isLose)
+        //{
+        //    print("isLoseTrue");
+        //    // Cancelar la Coroutine actual y empezar la nueva Coroutine
+        //    if (currentCoroutine != null)
+        //        StopCoroutine(currentCoroutine);
+        //    currentCoroutine = StartCoroutine(Lose());
+
+        //}
+        if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            // Cancelar la Coroutine actual y empezar la nueva Coroutine
             if (currentCoroutine != null)
                 StopCoroutine(currentCoroutine);
-            currentCoroutine = StartCoroutine(Song3());
-        }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            if (currentCoroutine != null)
-                StopCoroutine(currentCoroutine);
-            currentCoroutine = StartCoroutine(Song2());
+            currentCoroutine = StartCoroutine(Lose());
         }
     }
+
 
     public void Play()
     {
@@ -69,238 +76,90 @@ public class PlaySong : MonoBehaviour
         //Oscilador2.Octava = 1;
         StartCoroutine(Song());
         Oscilador1.AddComponent<AudioChorusFilter>();
+        Oscilador2.AddComponent<AudioChorusFilter>();
     }
+    //Muerte
+    public void setLooseSong(bool f)
+    {
+      
 
-    IEnumerator Song3()
+        if (f)
+        {
+            if (currentCoroutine != null)
+                StopCoroutine(currentCoroutine);
+            currentCoroutine = StartCoroutine(Lose());
+        }
+    } 
+    
+     IEnumerator Lose()
     {
         //float tempo = 70f;
         //float TimePerNote=60/tempo;
         //Oscilador1.PlayPiano(18.354f);
         //yield return new WaitForSeconds(TimePerNote / 2f);
-        Oscilador1.StopPiano();
-        float tempo = 70f;
+        //Oscilador1.StopPiano();
+        float tempo = 200f;
         float TimePerNote = 60 / tempo;
 
         Oscilador1.Octava = 1;
-        Oscilador1.waveFormType = Osc.WaveFormType.Square;
+        Oscilador1.waveFormType = Osc.WaveFormType.Sine;
 
 
         Oscilador2.waveFormType = WaveFormType.Triangle;
 
+        float[] frequency = new float[] { 130.81f, 138.59f, 146.83f, 155.56f, 174.61f, 185.00f, 196.00f, 207.65f, 220.00f, 233.08f, 246.94f, 261.63f, 277.18f, 293.66f, 311.13f };
+        float decrement = 0.1f;
         while (true)
         {
+            for (int i = 1; i < frequency.Length; i++)
+            {
+                Oscilador1.PlayPiano(frequency[i]);
+                yield return new WaitForSeconds(TimePerNote - (decrement * i));
+                Oscilador1.StopPiano();
+                //TimePerNote = Mathf.Max(TimePerNote - decrement, 60);
+            }
 
-            Oscilador2.frecuencias.Add(130.813f);
-            Oscilador2.frecuencias.Add(164.814f);
-            Oscilador2.frecuencias.Add(195.998f);
-            Oscilador1.PlayPiano(246.942f);
-            Kick.Play();
-            Hithat.Play();
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Oscilador1.StopPiano();
-            Kick.Stop();
-            Hithat.Stop();
-
-            Hithat.Play();
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Hithat.Stop();
-
-            Snare.Play();
-            Hithat.Play();
-            Oscilador1.PlayPiano(220f);
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Oscilador1.StopPiano();
-            Kick.Stop();
-            Hithat.Stop();
-
-            Hithat.Play();
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Hithat.Stop();
-
-
-            Kick.Play();
-            Hithat.Play();
-            Oscilador1.PlayPiano(192.998f);
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Oscilador1.StopPiano();
-            Kick.Stop();
-            Hithat.Stop();
-
-            Hithat.Play();
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Hithat.Stop();
-
-
-            Snare.Play();
-            Hithat.Play();
-            Oscilador1.PlayPiano(220f);
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Oscilador1.StopPiano();
-            Oscilador2.frecuencias.Remove(130.813f);
-            Oscilador2.frecuencias.Remove(164.814f);
-            Oscilador2.frecuencias.Remove(195.998f);
-            Snare.Stop();
-            Hithat.Stop();
-
-            Hithat.Play();
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Hithat.Stop();
-
-
-            Kick.Play();
-            Hithat.Play();
-            Oscilador2.frecuencias.Add(293.665f);
-            Oscilador2.frecuencias.Add(246.942f);
-            Oscilador2.frecuencias.Add(195.998f);
-            Oscilador1.PlayPiano(246.942f);
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Oscilador1.StopPiano();
-            Kick.Stop();
-            Hithat.Stop();
-
-            Hithat.Play();
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Hithat.Stop();
-
-            Snare.Play();
-            Hithat.Play();
-            Oscilador1.PlayPiano(246.942f);
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Oscilador1.StopPiano();
-            Snare.Stop();
-            Hithat.Stop();
-
-            Kick.Play();
-            Hithat.Play();
-            Oscilador1.PlayPiano(246.942f);
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Oscilador1.StopPiano();
-            Oscilador2.frecuencias.Remove(293.665f);
-            Oscilador2.frecuencias.Remove(246.942f);
-            Oscilador2.frecuencias.Remove(195.998f);
-            Kick.Stop();
-            Hithat.Stop();
-
-            Hithat.Play();
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Hithat.Stop();
-
-            Snare.Play();
-            Hithat.Play();
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Snare.Stop();
-            Hithat.Stop();
-
-            Hithat.Play();
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Hithat.Stop();
-
-            Kick.Play();
-            Hithat.Play();
-            Oscilador2.frecuencias.Add(130.813f);
-            Oscilador2.frecuencias.Add(164.814f);
-            Oscilador2.frecuencias.Add(195.998f);
-            Oscilador1.PlayPiano(220f);
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Oscilador1.StopPiano();
-            Kick.Stop();
-            Hithat.Stop();
-
-            Hithat.Play();
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Hithat.Stop();
-
-            Snare.Play();
-            Hithat.Play();
-            Oscilador1.PlayPiano(220f);
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Oscilador1.StopPiano();
-            Snare.Stop();
-            Hithat.Stop();
-
-            Hithat.Play();
-            yield return new WaitForSeconds(TimePerNote / 2f);
-            Hithat.Stop();
-
-            Oscilador1.PlayPiano(220f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-            Oscilador2.frecuencias.Remove(130.813f);
-            Oscilador2.frecuencias.Remove(164.814f);
-            Oscilador2.frecuencias.Remove(195.998f);
-
-
-            Oscilador2.frecuencias.Add(293.665f);
-            Oscilador2.frecuencias.Add(246.942f);
-            Oscilador2.frecuencias.Add(195.998f);
-            Oscilador1.PlayPiano(246.942f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(246.942f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(246.942f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-            Oscilador2.frecuencias.Remove(293.665f);
-            Oscilador2.frecuencias.Remove(246.942f);
-            Oscilador2.frecuencias.Remove(195.998f);
-
-            Oscilador1.PlayPiano(246.942f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(220f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(192.998f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(220f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(246.942f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(246.942f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(246.942f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(220f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(220f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(246.942f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(220f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(192.998f);
-            yield return new WaitForSeconds(TimePerNote * 2f);
-            Oscilador1.StopPiano();
         }
+        
+    } 
+    //Saltar
+    IEnumerator JumpSong()
+    {
+        //float tempo = 70f;
+        //float TimePerNote=60/tempo;
+        //Oscilador1.PlayPiano(18.354f);
+        //yield return new WaitForSeconds(TimePerNote / 2f);
+        //Oscilador1.StopPiano();
+        float tempo = 60f;
+        float TimePerNote = 0.3f;
+        Oscilador1.nivel = 0.0f;
+        Oscilador2.nivel = 1.0f;
+        Oscilador2.Octava = 1;
+        //Oscilador1.waveFormType = Osc.WaveFormType.Sine;
+
+
+        Oscilador2.waveFormType = WaveFormType.Triangle;
+
+        float[] frequency = new float[] { 124.81f}; 
+
+       
+
+        for (int i = 0; i < frequency.Length; i++)
+        {
+            Oscilador2.PlayPiano(frequency[i]);
+            yield return new WaitForSeconds(TimePerNote);
+            Oscilador2.StopPiano();
+            //TimePerNote = Mathf.Max(TimePerNote - decrement, 60);
+        }
+        Oscilador1.nivel = 1f;
+
     }
+
+    //Principal nivel 1
 
     IEnumerator Song()
     {
-        float tempo = 140f;
+        float tempo = 70f;
         float TimePerNote = 60 / tempo;
 
 
@@ -312,78 +171,9 @@ public class PlaySong : MonoBehaviour
         while (true)
         {
 
-            // Notas de la melodia principal
-            Oscilador1.PlayPiano(329.63f); // E5
-            Kick.Play();
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-            Kick.Stop();
-
-            Oscilador1.PlayPiano(329.63f); // E5
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(329.63f); // E5
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            Snare.Play();
-            Oscilador1.PlayPiano(261.63f); // C5
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-            Snare.Stop();
-
-            Oscilador1.PlayPiano(392.00f); // G5
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(196.00f); // G3
-            Hithat.Play();
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-            Hithat.Stop();
-
-            Oscilador1.PlayPiano(293.66f); // D4
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            // Segunda parte de la melod�a
-            Oscilador1.PlayPiano(329.63f); // E5
-            Kick.Play();
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-            Kick.Stop();
-
-            Oscilador1.PlayPiano(392.00f); // G5
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(196.00f); // G3
-            Hithat.Play();
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-            Hithat.Stop();
-
-            Oscilador1.PlayPiano(261.63f); // C5
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(220.00f); // A4
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            Oscilador1.PlayPiano(174.61f); // F3
-            Hithat.Play();
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-            Hithat.Stop();
-
-            Oscilador1.PlayPiano(261.63f); // C5
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
+            
             // Tercera parte de la melod�a
-            Oscilador1.PlayPiano(392.00f); // G5
+            Oscilador1.PlayPiano(195.998f); // G5
             yield return new WaitForSeconds(TimePerNote);
             Oscilador1.StopPiano();
 
@@ -456,266 +246,143 @@ public class PlaySong : MonoBehaviour
 
     }
 
+    //Ganar
+    IEnumerator Ganar()
+    {
+
+        float tempo = 100f;
+        float TimePerNote = 60f / tempo;
+
+
+        Oscilador1.Octava = 1;
+        Oscilador1.waveFormType = Osc.WaveFormType.Square;
+
+        //float[] frequency = new float[] { 329.63f, 329.63f, 329.63f, 261.63f, 329.63f, 392.00f, 261.63f, 392.00f, 329.63f, 440.00f, 493.88f, 466.16f, 440.00f, 392.00f, 329.63f, 392.00f, 440.00f, 349.23f, 392.00f, 329.63f, 261.63f, 293.66f, 493.88f, 261.63f, 392.00f, 329.63f, 440.00f, 493.88f, 466.16f, 440.00f, 392.00f, 329.63f, 392.00f, 440.00f, 349.23f, 392.00f, 329.63f, 261.63f, 293.66f, 493.88f, 392.00f, 369.99f, 349.23f, 311.13f, 329.63f, 415.30f, 440.00f, 261.63f };
+
+        float[] frequency = {
+            // Notas del acorde F
+            349.23f, // F
+            392.00f, // G
+            466.16f, // Bb
+
+            // Notas del acorde Bb
+            466.16f, // Bb
+            523.25f, // C
+            587.33f, // D
+
+            // Notas del acorde C
+            523.25f, // C
+            587.33f, // D
+            659.26f  // E
+        };
+
+            for (int i = 0; i < frequency.Length; i++)
+            {
+                Oscilador1.PlayPiano(frequency[i]);
+                yield return new WaitForSeconds(TimePerNote);
+                Oscilador1.StopPiano();
+            }
+
+        //while (true)
+        //{
+
+
+        //}
+    }
     IEnumerator Song2()
     {
 
-        float tempo = 140f;
-        float TimePerNote = 60 / tempo;
+        float tempo = 120f;
+        float TimePerNote = 60f / tempo;
 
 
-        Oscilador1.Octava = 3;
-        Oscilador1.waveFormType = Osc.WaveFormType.Sawtooth;
+        Oscilador1.Octava = 1;
+        Oscilador1.waveFormType = Osc.WaveFormType.Square;
 
-        while(true)
+        float[] frequency = new float[]
         {
-        
-            //sol redonda
-            Oscilador1.PlayPiano(24.4997f * 4);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
+            220.00f,  // A3
+            220.00f,  // A3
+            174.61f,  // F3
+            195.998f, // G3
+            146.83f,  // D3
+            164.81f,  // E3
+            195.998f, // G3
+            184.997f, // F#3
+            164.81f,  // E3
+            155.56f,  // Eb3
+            146.83f,  // D3
+            138.59f,  // Db3
+            123.47f,  // B2
+            220.00f,  // A3
+            195.998f, // G3
+            184.997f, // F#3
+            164.81f,  // E3
+            146.83f,  // D3
+        };
+        while (true)
+        {
 
-            //do
-            Oscilador1.PlayPiano(16.3516f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //do
-            Oscilador1.PlayPiano(16.3516f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //sol
-            Oscilador1.PlayPiano(24.4997f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //sol 
-            Oscilador1.PlayPiano(24.4997f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //|
-            yield return new WaitForSeconds(TimePerNote);
-
-            //la
-            Oscilador1.PlayPiano(27.5000f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //la
-            Oscilador1.PlayPiano(27.5000f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //sol blanca
-            Oscilador1.PlayPiano(24.4997f * 2);
-            yield return new WaitForSeconds(TimePerNote* 2);
-            Oscilador1.StopPiano();
-
-            //|
-            yield return new WaitForSeconds(TimePerNote);
-
-            //fa
-            Oscilador1.PlayPiano(21.8268f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //fa
-            Oscilador1.PlayPiano(21.8268f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //mi
-            Oscilador1.PlayPiano(20.6017f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //mi
-            Oscilador1.PlayPiano(20.6017f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //|
-            yield return new WaitForSeconds(TimePerNote);
-
-            //re
-            Oscilador1.PlayPiano(18.3540f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //re
-            Oscilador1.PlayPiano(18.3540f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //do blanca
-            Oscilador1.PlayPiano(16.3516f * 2);
-            yield return new WaitForSeconds(TimePerNote* 2);
-            Oscilador1.StopPiano();
-
-            //|//|
-            yield return new WaitForSeconds(TimePerNote);
-
-            //sol
-            Oscilador1.PlayPiano(24.4997f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //sol
-            Oscilador1.PlayPiano(24.4997f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //fa
-            Oscilador1.PlayPiano(21.8268f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //fa
-            Oscilador1.PlayPiano(21.8268f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //|
-            yield return new WaitForSeconds(TimePerNote);
-
-            //mi
-            Oscilador1.PlayPiano(20.6017f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //mi
-            Oscilador1.PlayPiano(20.6017f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //re blanca
-            Oscilador1.PlayPiano(18.3540f * 2);
-            yield return new WaitForSeconds(TimePerNote* 2);
-            Oscilador1.StopPiano();
-
-            //|
-            yield return new WaitForSeconds(TimePerNote);
-
-            //sol
-            Oscilador1.PlayPiano(24.4997f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //sol
-            Oscilador1.PlayPiano(24.4997f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //fa
-            Oscilador1.PlayPiano(21.8268f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //fa
-            Oscilador1.PlayPiano(21.8268f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //|
-            yield return new WaitForSeconds(TimePerNote);
-
-            //mi
-            Oscilador1.PlayPiano(20.6017f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //mi
-            Oscilador1.PlayPiano(20.6017f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //re
-            Oscilador1.PlayPiano(18.3540f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //|//|
-            yield return new WaitForSeconds(TimePerNote);
-
-            //do
-            Oscilador1.PlayPiano(16.3516f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //do
-            Oscilador1.PlayPiano(16.3516f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //sol
-            Oscilador1.PlayPiano(24.4997f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //sol 
-            Oscilador1.PlayPiano(24.4997f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //|
-            yield return new WaitForSeconds(TimePerNote);
-
-            //la
-            Oscilador1.PlayPiano(27.5000f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //la
-            Oscilador1.PlayPiano(27.5000f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //sol blanca
-            Oscilador1.PlayPiano(24.4997f * 2);
-            yield return new WaitForSeconds(TimePerNote* 2);
-            Oscilador1.StopPiano();
-
-            //|
-            yield return new WaitForSeconds(TimePerNote);
-
-            //fa
-            Oscilador1.PlayPiano(21.8268f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //fa
-            Oscilador1.PlayPiano(21.8268f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //mi
-            Oscilador1.PlayPiano(20.6017f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //mi
-            Oscilador1.PlayPiano(20.6017f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //|
-            yield return new WaitForSeconds(TimePerNote);
-
-            //re
-            Oscilador1.PlayPiano(18.3540f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //re
-            Oscilador1.PlayPiano(18.3540f);
-            yield return new WaitForSeconds(TimePerNote);
-            Oscilador1.StopPiano();
-
-            //do blanca
-            Oscilador1.PlayPiano(16.3516f * 2);
-            yield return new WaitForSeconds(TimePerNote* 2);
-            Oscilador1.StopPiano();
+            for (int i = 0; i < frequency.Length; i++)
+            {
+                Oscilador1.PlayPiano(frequency[i]);
+                yield return new WaitForSeconds(TimePerNote);
+                Oscilador1.StopPiano();
+            }
         }
+        //while (true)
+        //{
+
+
+        //}
+    }
+    IEnumerator Song3()
+    {
+
+        float tempo = 140f;
+        float TimePerNote = 60f / tempo;
+
+
+        Oscilador1.Octava = 1;
+        Oscilador1.waveFormType = Osc.WaveFormType.Square;
+
+        float[] frequency = new float[]
+        {
+            261.63f,  // C4
+            293.66f,  // D4
+            329.63f,  // E4
+            349.23f,  // F4
+            392.00f,  // G4
+            440.00f,  // A4
+            493.88f,  // B4
+            523.25f,  // C5
+            493.88f,  // B4
+            440.00f,  // A4
+            392.00f,  // G4
+            349.23f,  // F4
+            329.63f,  // E4
+            293.66f,  // D4
+            261.63f,  // C4
+            220.00f,  // A3
+            246.94f,  // B3
+            261.63f,  // C4
+            293.66f,  // D4
+            329.63f,  // E4
+        };
+        while (true)
+        {
+
+            for (int i = 0; i < frequency.Length; i++)
+            {
+                Oscilador1.PlayPiano(frequency[i]);
+                yield return new WaitForSeconds(TimePerNote);
+                Oscilador1.StopPiano();
+            }
+        }
+        //while (true)
+        //{
+
+
+        //}
     }
 }

@@ -9405,6 +9405,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1215468327}
     - target: {fileID: 2650561198443267163, guid: 5b59370d33b2cc04291cb3d38ed6ad8f, type: 3}
+      propertyPath: playSong
+      value: 
+      objectReference: {fileID: 8833279}
+    - target: {fileID: 2650561198443267163, guid: 5b59370d33b2cc04291cb3d38ed6ad8f, type: 3}
       propertyPath: distanciaAbajo
       value: 0.7
       objectReference: {fileID: 0}

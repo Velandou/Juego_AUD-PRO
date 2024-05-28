@@ -35,6 +35,7 @@ public class Osc : MonoBehaviour
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0;
+        audioSource.ignoreListenerPause = true;
         audioSource.Stop();
 
 

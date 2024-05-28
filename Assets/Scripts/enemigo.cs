@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Osc;
 
 public class enemigo : MonoBehaviour
 {
@@ -22,7 +24,14 @@ public class enemigo : MonoBehaviour
 
 	private bool mirandoALaDerecha = true;
 
-	private void Update()
+
+	public PlaySong playSong;
+    private bool isCoroutineRunning = false;
+    private void Start()
+    {
+       
+    }
+    private void Update()
     {
 		rb2D.velocity = new Vector2(velocidadDeMovimiento,rb2D.velocity.y);
 
@@ -32,6 +41,7 @@ public class enemigo : MonoBehaviour
 		if(informacionEnFrente || !informacionAbajo)
         {
 			Girar();
+            
         }
 	}
 
@@ -51,15 +61,33 @@ public class enemigo : MonoBehaviour
 
 	private void OnCollisionEnter2D(Collision2D other)
 	{
-		if (other.gameObject.CompareTag("Player"))
+		if (other.gameObject.CompareTag("Player") && !isCoroutineRunning)
 		{
-			GameManager.Instance.PerderVida();
+            Debug.Log("'losseee/");
+            playSong.setLooseSong(true);
+            StartCoroutine(LooseAfterDelay(0.5f));
+            
 		}
 	}
 
 	private void SpawnNewEnemy()
 	{
-		// Access the ObstacleManager or a dedicated enemy spawner script to handle enemy spawning
-		ObstacleManager.Instance.SpawnRandomObstacle(); // Assuming you have an ObstacleManager with a method to spawn enemies
+        // Access the ObstacleManager or a dedicated enemy spawner script to handle enemy spawning      
+        ObstacleManager.Instance.SpawnRandomObstacle(); // Assuming you have an ObstacleManager with a method to spawn enemies
 	}
+    IEnumerator LooseAfterDelay(float time)
+    {
+        isCoroutineRunning = true;
+        
+        // Esperar el tiempo especificado
+        yield return new WaitForSeconds(time);
+
+        // Acción a ejecutar después de la espera
+        Debug.Log("Se ejecutó después de " + time + " segundos");
+        GameManager.Instance.PerderVida();
+        playSong.setLooseSong(false);
+        isCoroutineRunning = false;
+        
+    }
+    
 }
