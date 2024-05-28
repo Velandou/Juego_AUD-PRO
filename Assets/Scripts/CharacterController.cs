@@ -7,6 +7,7 @@ public class CharacterController : MonoBehaviour
     public float velocidad;
     public float fuerzaSalto;
     public float saltoMax;
+    public float fuerzaGolpe;
     public LayerMask capaSuelo;
 
     private Rigidbody2D rigidBody;
@@ -14,6 +15,7 @@ public class CharacterController : MonoBehaviour
     private bool mirDER = true;
     private float saltoR;
     private Animator animator;
+    private bool puedeMoverse = true;
 
 
     // Start is called before the first frame update
@@ -58,6 +60,8 @@ public class CharacterController : MonoBehaviour
 
     void Movimiento()
     {
+        if (!puedeMoverse) return;
+
         float inputMov = Input.GetAxis("Horizontal");
 
         if(inputMov != 0f)
@@ -83,5 +87,34 @@ public class CharacterController : MonoBehaviour
             mirDER = !mirDER;
             transform.localScale = new Vector2(-transform.localScale.x, transform.localScale.y);
         }
+    }
+
+    public void AplicarGolpe()
+    {
+        puedeMoverse = false;
+        Vector2 direccionGolpe;
+        if(rigidBody.velocity.x > 0)
+        {
+            direccionGolpe = new Vector2(-1, 1);
+        }
+        else
+        {
+            direccionGolpe = new Vector2(1, 1);
+        }
+        rigidBody.AddForce(direccionGolpe * fuerzaGolpe);
+
+        StartCoroutine(EsperarYActivarMovimiento());
+    }
+
+    IEnumerator EsperarYActivarMovimiento()
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        while (!EstaEnSuelo())
+        {
+            yield return null;
+        }
+
+        puedeMoverse = true;
     }
 }

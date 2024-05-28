@@ -70,6 +70,8 @@ public class enemigo : MonoBehaviour
 		}
 	}
 
+
+
 	private void SpawnNewEnemy()
 	{
         // Access the ObstacleManager or a dedicated enemy spawner script to handle enemy spawning      
