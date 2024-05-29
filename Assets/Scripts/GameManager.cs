@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public hud hud;
+    //public event EventHandler MuerteJugador;
 
     private int vidas = 1;
 
@@ -27,13 +27,9 @@ public class GameManager : MonoBehaviour
         vidas -= 1;
         if (vidas == 0)
         {
-            SceneManager.LoadScene(1);
+            //MuerteJugador?.Invoke(this, EventArgs.Empty);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
         hud.DesactivarVida(vidas);
     }
-
-    //public void SumarPuntos(int puntosASumar)
-    //{
-    //    puntosTotales += puntosASumar;
-    //}
 }
